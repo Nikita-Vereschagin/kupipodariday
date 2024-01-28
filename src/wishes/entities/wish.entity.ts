@@ -1,21 +1,22 @@
 import { IsInt, IsNotEmpty, IsNumber, IsUrl, Length } from 'class-validator';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
+@Entity()
 export class Wish {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Length(1, 250)
   @Column({
-    type: 'string',
+    type: 'text',
     default: 'Супер пупер крутая вещь, купишь - не пожалеешь, отвечаю :O ',
   })
   name: string;
@@ -23,7 +24,6 @@ export class Wish {
   @IsNotEmpty()
   @IsUrl()
   @Column({
-    type: 'string',
     default: 'https://superpuper/228',
   })
   link: string;
@@ -31,7 +31,6 @@ export class Wish {
   @IsNotEmpty()
   @IsUrl()
   @Column({
-    type: 'string',
     default: 'https://superpuper/228',
   })
   image: string;

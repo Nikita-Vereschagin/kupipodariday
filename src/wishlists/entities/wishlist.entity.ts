@@ -3,25 +3,28 @@ import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import {
   Column,
+  CreateDateColumn,
+  Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
+@Entity()
 export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Length(1, 250)
   @Column({
-    type: 'string',
     default: 'Супер пупер список',
   })
   name: string;
@@ -29,7 +32,6 @@ export class Wishlist {
   @IsNotEmpty()
   @IsUrl()
   @Column({
-    type: 'string',
     default: 'https://superpuper/228',
   })
   image: string;

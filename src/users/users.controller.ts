@@ -16,7 +16,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   findMe(@Req() req) {
-    return req.user;
+    return this.usersService.findById(req.user.id);
   }
 
   //  PATCH /users/me
@@ -29,16 +29,17 @@ export class UsersController {
 
   //  GET /users/me/wishes
 
-/*  @Get('me/wishes')
+  @UseGuards(JwtAuthGuard)
+  @Get('me/wishes')
   findMyWIshes(@Req() req) {
-    const user = req.user;
+    const user = req.user.id
 
     if (!user) {
-      throw new Error('Что-то пошло не так');
+      throw new Error(`Что-то пошло не так: ${user}`)
     }
 
-    return this.wishesService.findUsersWishes(user.id);
-  }*/
+    return this.wishesService.findUsersWishes(user.id)
+  }
 
   //  GET /users/{username}
 
@@ -55,7 +56,7 @@ export class UsersController {
 
   //  GET /users/{username}/wishes
 
-  /*@Get(':username/wishes')
+  @Get(':username/wishes')
   async findWishesByUsername(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
 
@@ -64,7 +65,7 @@ export class UsersController {
     }
 
     return this.wishesService.findUsersWishes(user.id);
-  }*/
+  }
 
   //  GET /users/find
 

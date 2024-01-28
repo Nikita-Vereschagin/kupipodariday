@@ -24,7 +24,6 @@ export class User {
 
   @Length(2, 30)
   @Column({
-    type: 'string',
     unique: true,
     default: 'Vasya228',
   })
@@ -40,7 +39,6 @@ export class User {
   @IsNotEmpty()
   @IsUrl()
   @Column({
-    type: 'string',
     default: 'https://i.pravatar.cc/300',
   })
   avatar: string;
@@ -48,16 +46,13 @@ export class User {
   @IsEmail()
   @IsNotEmpty()
   @Column({
-    type: 'string',
     unique: true,
     default: 'vasya228@ya.ru',
   })
   email: string;
 
   @IsNotEmpty()
-  @Column({
-    type: 'string',
-  })
+  @Column()
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
