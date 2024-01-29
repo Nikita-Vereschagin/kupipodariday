@@ -43,7 +43,7 @@ export class WishlistsController {
   updateOne(@Param('id') id: string, @Req() req, dto: UpdateWishlistDto) {
     return this.wishlistsService.updateOne(
       Number(id),
-      Number(req.user.id),
+      req.user,
       dto,
     );
   }
@@ -52,6 +52,6 @@ export class WishlistsController {
 
   @Delete(':id')
   removeOne(@Param('id') id: string, @Req() req) {
-    return this.wishlistsService.removeOne(Number(id), Number(req.user.id));
+    return this.wishlistsService.removeOne(Number(id), req.user);
   }
 }

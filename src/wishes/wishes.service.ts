@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -61,19 +61,19 @@ export class WishesService {
     });
   }
 
-  async updateOne(id: number, userId: number, updateWishDto: UpdateWishDto) {
-    const user = await this.findOne(id);
+  async updateOne(id: number, user: User, updateWishDto: UpdateWishDto) {
+    const card = await this.findOne(id);
 
-    if (!user) {
+    if (!card) {
       throw new Error('Пользователь не найден');
     }
 
-    if (user.owner.id !== userId) {
-      throw new Error('ID пользователя не совпадают');
+    if (card.owner.id !== user.id) {
+      throw new HttpException('Нельзя отредактировать чужую карточку', HttpStatus.FORBIDDEN)
     }
 
-    if (user.offers.length > 0) {
-      throw new BadRequestException('Подарок уже предложен');
+    if (card.raised != 0.0) {
+      throw new HttpException('Нельзя отредактировать карточку, которую поддержали другие пользователи', HttpStatus.FORBIDDEN)
     }
 
     return this.wishRepository.save({
@@ -82,20 +82,24 @@ export class WishesService {
     });
   }
 
-  async removeOne(id: number, userId: number) {
-    const user = await this.findOne(id);
+  async removeOne(id: number, user: User ) {
+    const card = await this.findOne(id)
 
-    if (!user) {
-      throw new Error('Пользователь не найден');
+    if (!card) {
+      throw new Error('Картачка не найдена')
     }
 
-    if (user.owner.id !== userId) {
-      throw new Error('ID пользователя не совпадают');
+    if (card.owner.id !== user.id) {
+      throw new HttpException('Нельзя удалить чужую карточку', HttpStatus.FORBIDDEN)
     }
 
-    await this.wishRepository.delete({ id });
+    if (card.raised != 0.0) {
+      throw new HttpException('Нельзя удалить карточку, которую поддержали другие пользователи', HttpStatus.FORBIDDEN)
+    }
 
-    return {};
+    await this.wishRepository.delete({ id })
+
+    return card
   }
 
   async updateCopy(id: number, userId: number) {

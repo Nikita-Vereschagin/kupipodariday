@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -54,15 +56,15 @@ export class WishlistsService {
     return wishlist;
   }
 
-  async updateOne(id: number, userId: number, dto: UpdateWishlistDto) {
+  async updateOne(id: number, user: User, dto: UpdateWishlistDto) {
     const wishlist = await this.findOne(id);
 
     if (!wishlist) {
       throw new NotFoundException('Такого списка нет');
     }
 
-    if (wishlist.owner.id !== userId) {
-      throw new BadRequestException('Недостаточно прав на удаление');
+    if (wishlist.owner.id !== user.id) {
+      throw new HttpException('Нельзя редактрировать чужой список', HttpStatus.FORBIDDEN)
     }
 
     const items = await this.wishRepository.find({
@@ -77,15 +79,15 @@ export class WishlistsService {
     });
   }
 
-  async removeOne(id: number, userId: number) {
+  async removeOne(id: number, user: User) {
     const wishlist = this.findOne(id);
 
     if (!wishlist) {
       throw new NotFoundException('Такого списка нет');
     }
 
-    if ((await wishlist).owner.id !== userId) {
-      throw new BadRequestException('Недостаточно прав на удаление');
+    if ((await wishlist).owner.id !== user.id) {
+      throw new HttpException('Нельзя удалить чужой список', HttpStatus.FORBIDDEN)
     }
 
     await this.wishlistRepository.delete(id);

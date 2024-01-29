@@ -34,10 +34,6 @@ export class OffersService {
       throw new NotFoundException('Такого подарка нет')
     }
 
-    if (wish.owner.id === user.id) {
-      throw new BadRequestException('Недостаточно прав на удаление')
-    }
-
     if (wish.raised + amount > wish.price) {
       throw new BadRequestException('Вносимая сумма слишком большая')
     } else {
