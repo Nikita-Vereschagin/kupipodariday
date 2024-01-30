@@ -7,11 +7,13 @@ import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../auth/strategy/local.strategy';
 import { JwtFactory } from 'src/config/jwt.factory';
+import { HashModule } from 'src/helpers/hash/hash.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    HashModule,
     JwtModule.registerAsync({
       useClass: JwtFactory,
     }),

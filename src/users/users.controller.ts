@@ -43,6 +43,7 @@ export class UsersController {
 
   //  GET /users/{username}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':username')
   async findByUsername(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
@@ -56,6 +57,7 @@ export class UsersController {
 
   //  GET /users/{username}/wishes
 
+  @UseGuards(JwtAuthGuard)
   @Get(':username/wishes')
   async findWishesByUsername(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
@@ -69,6 +71,7 @@ export class UsersController {
 
   //  GET /users/find
 
+  @UseGuards(JwtAuthGuard)
   @Post('find')
   findMany(@Body('query') query: string) {
     return this.usersService.findMany(query);

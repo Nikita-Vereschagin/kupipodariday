@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional, isBoolean } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
@@ -14,6 +14,7 @@ export class Offer {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @IsOptional()
   @Column({
     type: 'boolean',
     default: false,

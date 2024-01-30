@@ -5,13 +5,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { SigninDto } from './dto/signin.dto';
-import { compare } from 'bcrypt';
+import { HashService } from 'src/helpers/hash/hash.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    private hashService: HashService,
   ) {}
 
   async signin(dto: SigninDto) {
@@ -24,7 +25,7 @@ export class AuthService {
   async checkPassword(dto: SigninDto) {
     const user = await this.usersService.findByUsername(dto.username)
 
-    if (!user || !(await compare(dto.password, user.password))) {
+    if (!user || !this.hashService.compare(dto.password, user.password)) {
         throw new UnauthorizedException('Неверный логин или пароль')
       }
 

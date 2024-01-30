@@ -5,11 +5,13 @@ import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { HashService } from 'src/helpers/hash/hash.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private hashService: HashService
   ) {}
 
   //  CREATE  \\
@@ -20,12 +22,12 @@ export class UsersService {
     if (username || email) {
       throw new ConflictException('Пользователь с таким именем или почтой уже существует')
     }
-    return await bcrypt.hash(dto.password, 10).then((hashed) =>
-      this.userRepository.save({
-        ...dto,
-        password: hashed,
-      }),
-    );
+    const hash = this.hashService.getHash(dto.password)
+    await this.userRepository.save({
+      ...dto,
+      password: hash,
+    })
+    return
   }
 
   //  FIND  \\
@@ -57,25 +59,22 @@ export class UsersService {
   //  UPDATE  \\
 
   async updateOne(user: User, dto: UpdateUserDto) {
-    let updatedUser = {};
+    let updatedUser = {}
 
     if (dto.hasOwnProperty('password')) {
-      updatedUser = await bcrypt
-        .hash(dto.password, 10)
-        .then((hashed) =>
-          this.userRepository.save({
-            ...user,
-            ...dto,
-            password: hashed,
-          }),
-        );
+      const hash = this.hashService.getHash(dto.password)
+      updatedUser = await this.userRepository.save({
+        ...user,
+        ...dto,
+        password: hash,
+      })
     } else {
       updatedUser = await this.userRepository.save({
         ...user,
         ...dto,
-      });
+      })
     }
 
-    return updatedUser;
+    return updatedUser
   }
 }
